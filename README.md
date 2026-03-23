@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDF Annotation App
 
-## Getting Started
+A local-first PDF annotation tool built with Next.js, React PDF, and Konva.
 
-First, run the development server:
+## Features
+
+- Load and view the first page of a PDF
+- Add annotations:
+  - Rectangle
+  - Circle
+  - Line
+  - Text
+- Select, move, edit, and delete annotations
+- Export annotations as JSON
+- Import annotations from JSON
+- Zoom the PDF canvas
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- `react-pdf`
+- `react-konva`
+- Radix UI Dialog
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js 18 or newer
+- npm
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Lint
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+```
 
-## Learn More
+### Production Build
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Upload a PDF.
+2. Choose an annotation tool from the top toolbar.
+3. Click or draw on the page to create annotations.
+4. Select annotations to move them or edit them from the right sidebar.
+5. Use Export JSON to save annotation data.
+6. Use Import to restore annotation data from JSON.
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- The app renders the first page of the uploaded PDF.
+- Annotation import scales coordinates to the current rendered page size.
+- PDF.js uses the locally bundled worker, so no CDN access is required for the worker.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Submission Checklist
+
+- App runs locally with documented setup steps
+- Required features are implemented:
+  - PDF load/view
+  - Shape annotations
+  - Text annotations
+  - Select / move / delete
+- Export works:
+  - Annotation JSON export
+  - Annotation JSON import
+- Linting passes with no errors
+- Repository is ready for review
