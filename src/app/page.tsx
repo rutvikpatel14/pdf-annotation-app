@@ -109,7 +109,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-app-bg">
+    <div className="flex h-screen flex-col overflow-hidden bg-app-bg">
       <Toolbar
         tool={tool}
         onToolChange={setTool}
@@ -119,8 +119,8 @@ export default function HomePage() {
         onZoomChange={setZoom}
       />
 
-      <div className="flex-1 min-h-0 flex">
-        <div className="flex-1 min-w-0">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="min-w-0 flex-1 overflow-y-auto">
           <PdfViewer
             tool={tool}
             onToolChange={setTool}
@@ -204,3 +204,4 @@ export default function HomePage() {
     </div>
   );
 }
+

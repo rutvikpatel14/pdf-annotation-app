@@ -83,7 +83,7 @@ export const AnnotationsSidebar = ({
     annotations.find((annotation) => annotation.id === selectedId) ?? null;
 
   return (
-    <aside className="flex h-[calc(100vh-65px)] w-72 shrink-0 flex-col border-l border-app-border bg-app-surface">
+    <aside className="flex h-full w-72 shrink-0 flex-col border-l border-app-border bg-app-surface">
       <div className="flex items-center justify-between border-b border-app-border p-4">
         <div className="flex items-center gap-2 font-bold text-app-text">
           <Layers size={18} className="text-brand" />
@@ -371,4 +371,5 @@ export const AnnotationsSidebar = ({
     </aside>
   );
 };
+
 
