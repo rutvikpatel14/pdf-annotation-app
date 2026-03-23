@@ -187,7 +187,7 @@ export const AnnotationsSidebar = ({
                     <button
                       type="button"
                       onClick={() => onDeleteAnnotation(annotation.id)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-surface px-3 py-1.5 text-xs font-semibold text-app-text-muted transition-colors hover:bg-app-surface-soft"
+                      className="inline-flex items-center gap-2 rounded-lg border border-danger-border bg-danger-text px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                     >
                       <Trash2 size={14} />
                       Delete
@@ -371,3 +371,4 @@ export const AnnotationsSidebar = ({
     </aside>
   );
 };
+

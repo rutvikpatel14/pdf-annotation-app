@@ -19,8 +19,8 @@
   --success-border: #a7f3d0;
   --success-text: #065f46;
   --danger-bg: #fff1f2;
-  --danger-border: #fecdd3;
-  --danger-text: #881337;
+  --danger-border: #dc3545;
+  --danger-text: #dc3545;
 }
 
 @theme inline {
