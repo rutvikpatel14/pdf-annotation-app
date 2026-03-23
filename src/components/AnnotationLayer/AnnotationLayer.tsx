@@ -15,7 +15,7 @@ import { useDrag } from "@/hooks/useDrag";
 import {
   clampNumber,
   createIdFallbackSafe,
-} from "@/features/annotations/utils/misc";
+} from "@/features/annotations/utils/annotationUtils";
 import { PRIMARY_COLOR } from "@/utils/constants";
 import { AnnotationItem } from "../AnnotationItem/AnnotationItem";
 
@@ -63,7 +63,7 @@ type TextEditingState = {
   color: string;
 };
 
-export function AnnotationLayer({
+export const AnnotationLayer = ({
   pageSize,
   tool,
   annotations,
@@ -73,7 +73,7 @@ export function AnnotationLayer({
   onAddAnnotation,
   onUpdateAnnotation,
   onMoveAnnotation,
-}: AnnotationLayerProps) {
+}: AnnotationLayerProps) => {
   const stageRef = useRef<KonvaStage | null>(null);
   const { getPointerPosition } = useDrag(stageRef);
 
@@ -409,7 +409,7 @@ export function AnnotationLayer({
             width: 340,
             zIndex: 20,
           }}
-          className="rounded-xl border border-[#BFDBFE] bg-white/95 p-2 shadow-[0_8px_24px_rgba(17,24,39,0.15)]"
+          className="rounded-xl border border-brand-soft-strong bg-app-surface/95 p-2 shadow-[0_8px_24px_rgba(17,24,39,0.15)]"
         >
           <input
           ref={textareaRef}
@@ -437,7 +437,7 @@ export function AnnotationLayer({
             border: `2px solid ${editing.color}`,
             padding: "0 12px",
             background: "rgba(255,255,255,0.95)",
-            color: "#111827",
+            color: "var(--app-text)",
             fontSize: editing.fontSize,
             outline: "none",
           }}
@@ -450,14 +450,14 @@ export function AnnotationLayer({
               <button
                 type="button"
                 onClick={cancelTextEditing}
-                className="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
+                className="rounded-lg border border-app-border px-3 py-1.5 text-xs font-medium text-app-text-muted hover:bg-app-surface-soft"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={commitTextEditing}
-                className="rounded-lg bg-[#2563EB] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#1D4ED8]"
+                className="rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-hover"
               >
                 Confirm
               </button>
@@ -467,4 +467,4 @@ export function AnnotationLayer({
       ) : null}
     </div>
   );
-}
+};

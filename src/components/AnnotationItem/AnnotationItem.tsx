@@ -21,14 +21,14 @@ type AnnotationItemProps = {
   onRequestEditText: (id: string) => void;
 };
 
-export function AnnotationItem({
+export const AnnotationItem = ({
   annotation,
   isSelected,
   tool,
   onSelect,
   onMove,
   onRequestEditText,
-}: AnnotationItemProps) {
+}: AnnotationItemProps) => {
   const draggable = tool === "select" && isSelected;
 
   const commonProps = {
@@ -151,4 +151,4 @@ export function AnnotationItem({
       return null;
     }
   }
-}
+};

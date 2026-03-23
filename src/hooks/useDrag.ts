@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 export type StagePointerPosition = { x: number; y: number };
 
-export function useDrag(stageRef: React.RefObject<Stage | null>) {
+export const useDrag = (stageRef: React.RefObject<Stage | null>) => {
   const getPointerPosition = useCallback((): StagePointerPosition | null => {
     const stage = stageRef.current;
     if (!stage) return null;
@@ -17,5 +17,4 @@ export function useDrag(stageRef: React.RefObject<Stage | null>) {
   }, [stageRef]);
 
   return { getPointerPosition };
-}
-
+};

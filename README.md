@@ -74,16 +74,3 @@ npm start
 - Annotation import scales coordinates to the current rendered page size.
 - PDF.js uses the locally bundled worker, so no CDN access is required for the worker.
 
-## Submission Checklist
-
-- App runs locally with documented setup steps
-- Required features are implemented:
-  - PDF load/view
-  - Shape annotations
-  - Text annotations
-  - Select / move / delete
-- Export works:
-  - Annotation JSON export
-  - Annotation JSON import
-- Linting passes with no errors
-- Repository is ready for review

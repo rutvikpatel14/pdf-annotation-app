@@ -25,13 +25,13 @@ type PdfViewerProps = {
   zoom: number;
 };
 
-function safeIsPdf(file: File): boolean {
+const safeIsPdf = (file: File): boolean => {
   const nameOk = file.name.toLowerCase().endsWith(".pdf");
   const typeOk = file.type === "application/pdf" || file.type === "application/x-pdf";
   return nameOk || typeOk;
-}
+};
 
-export function PdfViewer({
+export const PdfViewer = ({
   tool,
   onToolChange,
   annotations,
@@ -42,7 +42,7 @@ export function PdfViewer({
   onMoveAnnotation,
   onStageSizeChange,
   zoom,
-}: PdfViewerProps) {
+}: PdfViewerProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [baseWidth, setBaseWidth] = useState<number>(720);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -102,6 +102,10 @@ export function PdfViewer({
     }
 
     if (!safeIsPdf(file)) {
+      console.error("Invalid upload attempted", {
+        fileName: file.name,
+        fileType: file.type,
+      });
       setPdfError("Invalid file. Please upload a PDF document.");
       return;
     }
@@ -114,7 +118,6 @@ export function PdfViewer({
     });
   };
 
-  const pdfDocument = useMemo(() => pdfUrl, [pdfUrl]);
   const uploadInputId = "pdf-upload";
 
   return (
@@ -135,29 +138,29 @@ export function PdfViewer({
           ref={containerRef}
           className={[
             "relative flex justify-center",
-            pdfDocument ? "mt-6 items-start" : "min-h-[70vh] items-center",
+            pdfUrl ? "mt-6 items-start" : "min-h-[70vh] items-center",
           ].join(" ")}
           style={{ width: "100%" }}
         >
-          {!pdfDocument ? (
+          {!pdfUrl ? (
             <div className="flex w-full flex-1 items-center justify-center">
               <button
                 type="button"
                 onClick={() => document.getElementById(uploadInputId)?.click()}
-                className="group flex w-full max-w-md flex-col items-center gap-6 rounded-[28px] border-2 border-dashed border-slate-300 bg-white px-10 py-14 text-center shadow-[0_24px_70px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:border-[#2563EB] hover:shadow-[0_28px_80px_rgba(37,99,235,0.12)]"
+                className="group flex w-full max-w-md flex-col items-center gap-6 rounded-[28px] border-2 border-dashed border-app-border-strong bg-app-surface px-10 py-14 text-center shadow-[0_24px_70px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:border-brand hover:shadow-[0_28px_80px_rgba(37,99,235,0.12)]"
               >
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-[#2563EB] transition-transform group-hover:scale-110">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-ghost text-brand transition-transform group-hover:scale-110">
                   <Upload size={32} />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-xl font-bold text-slate-800">
+                  <h2 className="text-xl font-bold text-app-text">
                     Upload your PDF
                   </h2>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-app-text-muted">
                     Drag and drop your file here, or click to browse.
                   </p>
                 </div>
-                <span className="rounded-xl bg-[#2563EB] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-100 transition-colors group-hover:bg-[#1D4ED8]">
+                <span className="rounded-xl bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-100 transition-colors group-hover:bg-brand-hover">
                   Select File
                 </span>
                 {pdfError ? (
@@ -169,16 +172,16 @@ export function PdfViewer({
             </div>
           ) : (
             <div className="w-full">
-              <div className="mb-4 flex flex-wrap items-center gap-3 text-sm font-medium text-slate-500">
-                <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm ring-1 ring-slate-200">
+              <div className="mb-4 flex flex-wrap items-center gap-3 text-sm font-medium text-app-text-muted">
+                <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-app-surface px-3 py-2 shadow-sm ring-1 ring-app-border-strong">
                   <FileText size={14} />
-                  <span className="max-w-[280px] truncate text-slate-700">
+                  <span className="max-w-[280px] truncate text-app-text">
                     {pdfName ?? "Uploaded PDF"}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleFileChange(null)}
-                    className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                    className="rounded-full p-1 text-app-text-soft transition-colors hover:bg-app-surface-soft hover:text-app-text"
                     aria-label="Remove uploaded PDF"
                   >
                     <X size={14} />
@@ -199,8 +202,9 @@ export function PdfViewer({
                 }}
               >
                 <Document
-                  file={pdfDocument}
+                  file={pdfUrl}
                   onLoadError={(err) => {
+                    console.error("PDF load failed", err);
                     setPdfError(
                       err instanceof Error ? err.message : "Failed to load PDF."
                     );
@@ -242,4 +246,4 @@ export function PdfViewer({
       </div>
     </div>
   );
-}
+};

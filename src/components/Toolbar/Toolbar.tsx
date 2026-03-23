@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { AnnotationTool } from "@/features/annotations/types/annotation.types";
 import * as Dialog from "@radix-ui/react-dialog";
+import { downloadJsonFile } from "@/utils/exportUtils";
 import {
   CheckCircle2,
   Download,
@@ -28,7 +29,7 @@ type ToastState = {
   text: string;
 } | null;
 
-function ToolButton({
+const ToolButton = ({
   active,
   label,
   onClick,
@@ -42,7 +43,7 @@ function ToolButton({
   onClick: () => void;
   icon: ReactNode;
   disabled?: boolean;
-}) {
+}) => {
   return (
     <button
       type="button"
@@ -52,8 +53,8 @@ function ToolButton({
       className={[
         "inline-flex items-center gap-2 px-3 py-1.5 rounded-md transition-all text-sm font-medium",
         active
-          ? "bg-white text-[#2563EB] shadow-sm"
-          : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50",
+          ? "bg-app-surface text-brand shadow-sm"
+          : "text-app-text-muted hover:bg-app-surface-soft hover:text-app-text",
         disabled ? "opacity-50 cursor-not-allowed" : "",
       ].join(" ")}
     >
@@ -61,23 +62,23 @@ function ToolButton({
       <span className="hidden xl:inline">{label}</span>
     </button>
   );
-}
+};
 
-function IconSquare() {
+const IconSquare = () => {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
       <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
-}
-function IconCircle() {
+};
+const IconCircle = () => {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
       <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
-}
-function IconLine() {
+};
+const IconLine = () => {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
       <path d="M5 19L19 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -85,8 +86,8 @@ function IconLine() {
       <circle cx="19" cy="5" r="1.5" fill="currentColor" />
     </svg>
   );
-}
-function IconText() {
+};
+const IconText = () => {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
       <path
@@ -99,8 +100,8 @@ function IconText() {
       <path d="M12 4v16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
-}
-function IconSelect() {
+};
+const IconSelect = () => {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
       <path
@@ -111,16 +112,16 @@ function IconSelect() {
       />
     </svg>
   );
-}
+};
 
-export default function Toolbar({
+const Toolbar = ({
   tool,
   onToolChange,
   onExportJson,
   onImportJson,
   zoom,
   onZoomChange,
-}: ToolbarProps) {
+}: ToolbarProps) => {
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
@@ -138,16 +139,11 @@ export default function Toolbar({
   const handleExport = () => {
     try {
       const json = onExportJson();
-      const blob = new Blob([json], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "annotations.json";
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadJsonFile("annotations.json", json);
       setToast({ tone: "success", text: "Annotations exported successfully." });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Export failed.";
+      console.error("Annotation export failed", err);
       setToast({ tone: "error", text: msg });
     }
   };
@@ -160,25 +156,26 @@ export default function Toolbar({
       setImportText("");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Import failed.";
+      console.error("Annotation import failed", err);
       setToast({ tone: "error", text: msg });
     }
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-[#E5E7EB]">
+    <div className="sticky top-0 z-50 border-b border-app-border bg-app-surface/90 backdrop-blur">
       <div className="mx-auto max-w-7xl px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 overflow-auto pb-1">
             <div className="flex items-center gap-2 mr-4 shrink-0">
-              <div className="w-8 h-8 bg-[#2563EB] rounded-lg flex items-center justify-center text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">
                 <FileText size={18} />
               </div>
-              <span className="font-bold text-slate-800 tracking-tight hidden sm:block">
+              <span className="hidden font-bold tracking-tight text-app-text sm:block">
                 AnnotatePDF
               </span>
             </div>
 
-            <div className="hidden md:block h-8 w-[1px] bg-[#E5E7EB] mx-2" />
+            <div className="mx-2 hidden h-8 w-px bg-app-border md:block" />
             <ToolButton
               active={tool === "select"}
               label="Select"
@@ -214,22 +211,22 @@ export default function Toolbar({
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden lg:flex items-center bg-slate-100 rounded-lg p-1 gap-1 mr-2">
+            <div className="mr-2 hidden items-center gap-1 rounded-lg bg-app-surface-soft p-1 lg:flex">
               <button
                 type="button"
                 onClick={() => onZoomChange(Math.max(25, zoom - 10))}
-                className="p-1 hover:bg-white rounded transition-colors text-slate-600"
+                className="rounded p-1 text-app-text-muted transition-colors hover:bg-app-surface hover:text-app-text"
                 title="Zoom out"
               >
                 <MinusIcon size={14} />
               </button>
-              <span className="text-xs font-mono w-12 text-center text-slate-600">
+              <span className="w-12 text-center font-mono text-xs text-app-text-muted">
                 {Math.round(zoom)}%
               </span>
               <button
                 type="button"
                 onClick={() => onZoomChange(Math.min(400, zoom + 10))}
-                className="p-1 hover:bg-white rounded transition-colors text-slate-600"
+                className="rounded p-1 text-app-text-muted transition-colors hover:bg-app-surface hover:text-app-text"
                 title="Zoom in"
               >
                 <Plus size={14} />
@@ -239,7 +236,7 @@ export default function Toolbar({
             <button
               type="button"
               onClick={handleExport}
-              className="rounded-lg bg-[#2563EB] text-white px-3 py-2 text-sm font-medium hover:bg-[#1D4ED8] transition flex items-center gap-2"
+              className="flex items-center gap-2 rounded-lg bg-brand px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-hover"
             >
               <Download size={16} />
               <span className="hidden md:inline">Export JSON</span>
@@ -247,7 +244,7 @@ export default function Toolbar({
             <button
               type="button"
               onClick={() => setImportOpen(true)}
-              className="rounded-lg bg-white border border-[#E5E7EB] text-[#111827] px-3 py-2 text-sm font-medium hover:bg-[#F3F4F6] transition flex items-center gap-2"
+              className="flex items-center gap-2 rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm font-medium text-app-text transition hover:bg-app-surface-soft"
             >
               <Upload size={16} />
               <span className="hidden md:inline">Import</span>
@@ -260,13 +257,13 @@ export default function Toolbar({
       <Dialog.Root open={importOpen} onOpenChange={setImportOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white shadow-lg border border-[#E5E7EB] p-4">
+          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-xl border border-app-border bg-app-surface p-4 shadow-lg">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <Dialog.Title className="text-base font-semibold text-[#111827]">
+                <Dialog.Title className="text-base font-semibold text-app-text">
                   Import annotations
                 </Dialog.Title>
-                <Dialog.Description className="text-sm text-[#6B7280] mt-1">
+                <Dialog.Description className="mt-1 text-sm text-app-text-muted">
                   Paste the exported JSON payload. Coordinates will be scaled to the current page size.
                 </Dialog.Description>
               </div>
@@ -274,7 +271,7 @@ export default function Toolbar({
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="rounded-lg px-2 py-1 hover:bg-[#F3F4F6]"
+                  className="rounded-lg px-2 py-1 hover:bg-app-surface-soft"
                   onClick={() => setToast(null)}
                 >
                   Close
@@ -285,7 +282,7 @@ export default function Toolbar({
             <textarea
               value={importText}
               onChange={(e) => setImportText(e.target.value)}
-              className="mt-3 w-full min-h-44 rounded-lg border border-[#E5E7EB] p-3 text-sm"
+              className="mt-3 min-h-44 w-full rounded-lg border border-app-border p-3 text-sm"
               placeholder='Paste JSON here, e.g. { "version": 1, "page": { ... }, "annotations": [...] }'
             />
 
@@ -293,7 +290,7 @@ export default function Toolbar({
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="rounded-lg border border-[#E5E7EB] px-3 py-2 text-sm font-medium hover:bg-[#F3F4F6]"
+                  className="rounded-lg border border-app-border px-3 py-2 text-sm font-medium hover:bg-app-surface-soft"
                   onClick={() => {
                     setImportText("");
                     setToast(null);
@@ -304,7 +301,7 @@ export default function Toolbar({
               </Dialog.Close>
               <button
                 type="button"
-                className="rounded-lg bg-[#2563EB] text-white px-3 py-2 text-sm font-medium hover:bg-[#1D4ED8] transition"
+                className="rounded-lg bg-brand px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-hover"
                 onClick={handleImportConfirm}
               >
                 Import
@@ -320,8 +317,8 @@ export default function Toolbar({
             className={[
               "flex items-start gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur",
               toast.tone === "success"
-                ? "border-emerald-200 bg-emerald-50/95 text-emerald-900"
-                : "border-rose-200 bg-rose-50/95 text-rose-900",
+                ? "border-success-border bg-success-bg/95 text-success-text"
+                : "border-danger-border bg-danger-bg/95 text-danger-text",
             ].join(" ")}
             role="status"
             aria-live="polite"
@@ -337,4 +334,6 @@ export default function Toolbar({
       ) : null}
     </div>
   );
-}
+};
+
+export default Toolbar;

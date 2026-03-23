@@ -17,7 +17,7 @@ import {
   importAnnotationsFromJson,
 } from "../utils/annotationHelpers";
 
-export function useAnnotations(initialState?: AnnotationsState) {
+export const useAnnotations = (initialState?: AnnotationsState) => {
   const [state, dispatch] = useReducer(
     annotationsReducer,
     initialState ?? ANNOTATIONS_INITIAL_STATE
@@ -93,5 +93,4 @@ export function useAnnotations(initialState?: AnnotationsState) {
       importJson,
     ]
   );
-}
-
+};

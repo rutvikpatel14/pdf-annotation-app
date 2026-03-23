@@ -7,7 +7,7 @@ import type {
   RectangleAnnotation,
   TextAnnotation,
 } from "../types/annotation.types";
-import { clampNumber, createIdFallbackSafe } from "./misc";
+import { clampNumber, createIdFallbackSafe } from "./annotationUtils";
 import { PRIMARY_COLOR } from "@/utils/constants";
 
 export const ANNOTATIONS_JSON_VERSION = 1;
@@ -18,23 +18,25 @@ type ExportedAnnotationsJsonV1 = {
   annotations: Annotation[];
 };
 
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
-}
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
-function parseAnnotationKind(value: unknown): AnnotationKind | null {
+const parseAnnotationKind = (value: unknown): AnnotationKind | null => {
   if (value === "rectangle") return "rectangle";
   if (value === "circle") return "circle";
   if (value === "line") return "line";
   if (value === "text") return "text";
   return null;
-}
+};
 
-function scaleAnnotation(annotation: Annotation, scaleX: number, scaleY: number): Annotation {
+const scaleAnnotation = (
+  annotation: Annotation,
+  scaleX: number,
+  scaleY: number
+): Annotation => {
   const avgScale = (scaleX + scaleY) / 2;
   switch (annotation.kind) {
     case "rectangle": {
@@ -78,43 +80,43 @@ function scaleAnnotation(annotation: Annotation, scaleX: number, scaleY: number)
       };
     }
   }
-}
+};
 
-function sanitizeNumber(name: string, value: unknown): number {
+const sanitizeNumber = (name: string, value: unknown): number => {
   if (!isFiniteNumber(value)) {
     throw new Error(`Invalid ${name}: expected a number`);
   }
   return value;
-}
+};
 
-function sanitizePositive(name: string, value: unknown): number {
+const sanitizePositive = (name: string, value: unknown): number => {
   const v = sanitizeNumber(name, value);
   if (v < 0) {
     throw new Error(`Invalid ${name}: must be >= 0`);
   }
   return v;
-}
+};
 
-function sanitizeId(value: unknown): string {
+const sanitizeId = (value: unknown): string => {
   if (typeof value !== "string" || value.trim().length === 0) {
     return createIdFallbackSafe();
   }
   return value;
-}
+};
 
-function sanitizeColor(value: unknown): string {
+const sanitizeColor = (value: unknown): string => {
   if (typeof value !== "string") return PRIMARY_COLOR;
   const v = value.trim();
   // Keep it strict for interview-quality payload validation.
   const isHex3 = /^#([0-9a-fA-F]{3})$/.test(v);
   const isHex6 = /^#([0-9a-fA-F]{6})$/.test(v);
   return isHex3 || isHex6 ? v : PRIMARY_COLOR;
-}
+};
 
-export function exportAnnotationsToJson(
+export const exportAnnotationsToJson = (
   annotations: Annotation[],
   pageSize: PageSize
-): string {
+): string => {
   const payload: ExportedAnnotationsJsonV1 = {
     version: ANNOTATIONS_JSON_VERSION,
     page: {
@@ -125,12 +127,12 @@ export function exportAnnotationsToJson(
   };
 
   return JSON.stringify(payload, null, 2);
-}
+};
 
-export function importAnnotationsFromJson(
+export const importAnnotationsFromJson = (
   json: string,
   currentPageSize: PageSize
-): Annotation[] {
+): Annotation[] => {
   let parsed: unknown;
   try {
     parsed = JSON.parse(json) as unknown;
@@ -171,13 +173,12 @@ export function importAnnotationsFromJson(
 
   const annotations = parseAnnotationsArray(annotationsUnknown);
   return annotations.map((a) => scaleAnnotation(a, scaleX, scaleY));
-}
+};
 
-function parseAnnotationsArray(value: unknown[]): Annotation[] {
-  return value.map((raw) => parseSingleAnnotation(raw));
-}
+const parseAnnotationsArray = (value: unknown[]): Annotation[] =>
+  value.map((raw) => parseSingleAnnotation(raw));
 
-function parseSingleAnnotation(raw: unknown): Annotation {
+const parseSingleAnnotation = (raw: unknown): Annotation => {
   if (!isRecord(raw)) {
     throw new Error("Invalid annotation: expected an object.");
   }
@@ -249,5 +250,4 @@ function parseSingleAnnotation(raw: unknown): Annotation {
       };
     }
   }
-}
-
+};

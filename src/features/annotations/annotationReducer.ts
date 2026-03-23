@@ -9,10 +9,10 @@ export const ANNOTATIONS_INITIAL_STATE: AnnotationsState = {
   selectedId: null,
 };
 
-function updateAnnotationById(
+const updateAnnotationById = (
   annotations: Annotation[],
   action: Extract<AnnotationAction, { type: "UPDATE_ANNOTATION" }>
-): Annotation[] {
+): Annotation[] => {
   const { id, kind, updates } = action.payload;
 
   return annotations.map((annotation) => {
@@ -53,12 +53,12 @@ function updateAnnotationById(
       }
     }
   });
-}
+};
 
-export function annotationsReducer(
+export const annotationsReducer = (
   state: AnnotationsState,
   action: AnnotationAction
-): AnnotationsState {
+): AnnotationsState => {
   switch (action.type) {
     case "ADD_ANNOTATION": {
       return {
@@ -98,5 +98,4 @@ export function annotationsReducer(
       };
     }
   }
-}
-
+};
